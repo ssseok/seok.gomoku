@@ -1,0 +1,31 @@
+#table {
+    position: absolute;
+    background-color: blanchedalmond;
+    width: 360px;
+    height: 360px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#go {
+    position: absolute;
+    margin: 10px;
+    width: 340px;
+    height: 340px;
+    border-collapse: collapse;
+}
+
+.black-stone {
+    background-color: black;
+    border-radius: 50%;
+}
+
+.white-stone {
+    background-color: white;
+    border-radius: 50%;
+}
+
+.square {
+    border: thin solid lightgray;
+    padding: 0;
+}
