@@ -111,6 +111,14 @@ function handleStonePlacement(e) {
         return;
     }
 
+    // 검은 돌이 3-3 또는 4-4 규칙을 위반하는지 확인
+    if (currentPlayer === 'black' && isForbiddenMove(row, col)) {
+        alert(
+            '이 동작은 3-3 또는 4-4 규칙을 위반합니다. 다른 위치를 선택하세요.'
+        );
+        return;
+    }
+
     // 논리 상태에 돌 배치
     boardState[row][col] = currentPlayer;
 
@@ -130,6 +138,152 @@ function handleStonePlacement(e) {
 
     // 다음 플레이어로 전환
     currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+}
+
+// 3-3 또는 4-4 규칙 위반 여부 확인
+function isForbiddenMove(row, col) {
+    boardState[row][col] = 'black'; // 임시로 돌을 배치
+
+    const isThreeThree = checkDoubleThree(row, col); // 3-3 규칙 위반 확인
+    const isFourFour = checkDoubleFour(row, col); // 4-4 규칙 위반 확인
+
+    boardState[row][col] = null; // 임시 돌 제거
+
+    return isThreeThree || isFourFour; // 둘 중 하나라도 위반 시 true 반환
+}
+
+// 3-3 규칙 확인
+function checkDoubleThree(row, col) {
+    let threeDirections = [];
+    const directions = [
+        [0, 1],
+        [1, 0],
+        [1, 1],
+        [1, -1], // 가로, 세로, 대각선 ↘, 대각선 ↙
+    ];
+
+    for (const [dx, dy] of directions) {
+        if (isOpenThree(row, col, dx, dy)) {
+            threeDirections.push([dx, dy]);
+            console.log(`Open Three found at direction: dx=${dx}, dy=${dy}`);
+        }
+        if (threeDirections.length >= 2) {
+            console.log(
+                `3-3 rule violation detected at (${row}, ${col}) with directions:`,
+                threeDirections
+            );
+            return true; // 3-3 위반
+        }
+    }
+
+    return false; // 3-3 위반이 아님
+}
+
+function isOpenThree(row, col, dx, dy) {
+    let count = 1; // 현재 돌 포함
+    let openEnds = 0;
+
+    // 앞쪽 방향 확인
+    let x = row + dx;
+    let y = col + dy;
+    while (
+        x >= 0 &&
+        x < 17 &&
+        y >= 0 &&
+        y < 17 &&
+        boardState[x][y] === 'black'
+    ) {
+        count++;
+        x += dx;
+        y += dy;
+    }
+    if (x >= 0 && x < 17 && y >= 0 && y < 17 && boardState[x][y] === null) {
+        openEnds++;
+    }
+
+    // 뒤쪽 방향 확인
+    x = row - dx;
+    y = col - dy;
+    while (
+        x >= 0 &&
+        x < 17 &&
+        y >= 0 &&
+        y < 17 &&
+        boardState[x][y] === 'black'
+    ) {
+        count++;
+        x -= dx;
+        y -= dy;
+    }
+    if (x >= 0 && x < 17 && y >= 0 && y < 17 && boardState[x][y] === null) {
+        openEnds++;
+    }
+
+    // 디버깅 로그 추가
+    console.log(
+        `Direction (dx=${dx}, dy=${dy}) -> count=${count}, openEnds=${openEnds}`
+    );
+
+    // 정확히 3개의 돌이 있어야 하고 양쪽 끝이 열려 있어야 함
+    const result = count === 3 && openEnds === 2;
+    console.log(
+        `isOpenThree -> result=${result} (count=${count}, openEnds=${openEnds})`
+    );
+    return result;
+}
+
+// 4-4 규칙 확인
+function checkDoubleFour(row, col) {
+    let fourCount = 0;
+    const directions = [
+        [0, 1],
+        [1, 0],
+        [1, 1],
+        [1, -1], // 가로, 세로, 대각선 ↘, 대각선 ↙
+    ];
+
+    for (const [dx, dy] of directions) {
+        if (isExactFour(row, col, dx, dy)) {
+            fourCount++;
+        }
+        if (fourCount >= 2) return true; // 4-4 위반
+    }
+
+    return false;
+}
+
+function isExactFour(row, col, dx, dy) {
+    let count = 1;
+
+    let x = row + dx;
+    let y = col + dy;
+    while (
+        x >= 0 &&
+        x < 17 &&
+        y >= 0 &&
+        y < 17 &&
+        boardState[x][y] === 'black'
+    ) {
+        count++;
+        x += dx;
+        y += dy;
+    }
+
+    x = row - dx;
+    y = col - dy;
+    while (
+        x >= 0 &&
+        x < 17 &&
+        y >= 0 &&
+        y < 17 &&
+        boardState[x][y] === 'black'
+    ) {
+        count++;
+        x -= dx;
+        y -= dy;
+    }
+
+    return count === 4; // 정확히 4개의 돌
 }
 
 // 승리 조건 확인
