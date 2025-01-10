@@ -6,6 +6,19 @@ const go = document.getElementById('go'); // 돌이 놓일 위치를 나타내�
 let currentPlayer = 'black'; // 현재 플레이어 ('black' 또는 'white')
 let boardState; // 17x17 배열로 게임 보드의 논리 상태를 추적
 
+// 화점 위치
+const starPoints = [
+    [3, 3],
+    [3, 9],
+    [3, 15],
+    [9, 3],
+    [9, 9],
+    [9, 15],
+    [15, 3],
+    [15, 9],
+    [15, 15],
+];
+
 // 게임 초기화
 initializeBoard(); // 게임 시작 시 보드를 초기화
 
@@ -18,6 +31,13 @@ function createCheckerboard() {
         for (let j = 0; j < 18; j++) {
             const td = document.createElement('td'); // 새로운 셀 생성
             td.setAttribute('class', 'square'); // 스타일링을 위한 클래스 지정
+
+            if (starPoints.some(([x, y]) => x === i && y === j)) {
+                const point = document.createElement('div');
+                point.setAttribute('class', 'star-point');
+                td.appendChild(point);
+            }
+
             tr.appendChild(td); // 현재 행에 셀 추가
         }
     }
