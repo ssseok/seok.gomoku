@@ -1,336 +1,307 @@
-// DOM 요소
-const table = document.getElementById('table'); // 시각적인 오목판
-const go = document.getElementById('go'); // 돌이 놓일 위치를 나타내는 판
+// // DOM 요소
+// const table = document.getElementById('table'); // 시각적인 오목판을 나타내는 HTML 요소
+// const go = document.getElementById('go'); // 바둑돌이 놓이는 위치를 표시할 HTML 요소
 
-// 게임 상태
-let currentPlayer = 'black'; // 현재 플레이어 ('black' 또는 'white')
-let boardState; // 17x17 배열로 게임 보드의 논리 상태를 추적
+// // 게임 상태
+// let currentPlayer = 'black'; // 현재 플레이어 ('black' 또는 'white')를 저장
+// let boardState; // 17x17 크기의 배열로 게임 보드의 상태를 저장 (null, 'black', 'white')
 
-// 화점 위치
-const starPoints = [
-    [3, 3],
-    [3, 9],
-    [3, 15],
-    [9, 3],
-    [9, 9],
-    [9, 15],
-    [15, 3],
-    [15, 9],
-    [15, 15],
-];
+// // 화점 위치 (오목판에서 별 모양의 점 위치)
+// const starPoints = [
+//     [3, 3],
+//     [3, 9],
+//     [3, 15],
+//     [9, 3],
+//     [9, 9],
+//     [9, 15],
+//     [15, 3],
+//     [15, 9],
+//     [15, 15],
+// ];
 
-// 게임 초기화
-initializeBoard(); // 게임 시작 시 보드를 초기화
+// // 게임 초기화 함수: 보드를 초기화하고 이벤트 리스너를 설정
+// initializeBoard();
 
-// 오목판(시각적인 바둑판) 생성
-function createCheckerboard() {
-    // 18행(테두리 포함)을 생성
-    for (let i = 0; i < 18; i++) {
-        const tr = document.createElement('tr'); // 새로운 행 생성
-        table.appendChild(tr); // 오목판 테이블에 행 추가
-        for (let j = 0; j < 18; j++) {
-            const td = document.createElement('td'); // 새로운 셀 생성
-            td.setAttribute('class', 'square'); // 스타일링을 위한 클래스 지정
+// // 오목판 생성 함수: 시각적인 바둑판을 생성
+// function createCheckerboard() {
+//     for (let i = 0; i < 18; i++) {
+//         // 18행(테두리를 포함한 크기)을 생성
+//         const tr = document.createElement('tr'); // 새로운 행(tr) 생성
+//         table.appendChild(tr); // 테이블에 행 추가
 
-            if (starPoints.some(([x, y]) => x === i && y === j)) {
-                const point = document.createElement('div');
-                point.setAttribute('class', 'star-point');
-                td.appendChild(point);
-            }
+//         for (let j = 0; j < 18; j++) {
+//             // 각 행에 대해 18개의 셀(td) 생성
+//             const td = document.createElement('td'); // 셀(td) 생성
+//             td.setAttribute('class', 'square'); // CSS 스타일을 위한 클래스 지정
 
-            tr.appendChild(td); // 현재 행에 셀 추가
-        }
-    }
-}
+//             // 화점 위치에 별 모양의 점 추가
+//             if (starPoints.some(([x, y]) => x === i && y === j)) {
+//                 const point = document.createElement('div');
+//                 point.setAttribute('class', 'star-point'); // 화점 스타일 지정
+//                 td.appendChild(point);
+//             }
 
-// 바둑돌이 놓일 판 생성
-function createPlacementBoard() {
-    // 17행(실제 플레이 가능한 영역)을 생성
-    for (let i = 0; i < 17; i++) {
-        const tr = document.createElement('tr'); // 새로운 행 생성
-        go.appendChild(tr); // 바둑돌 배치 테이블에 행 추가
-        for (let j = 0; j < 17; j++) {
-            const td = document.createElement('td'); // 새로운 셀 생성
-            td.setAttribute('id', `${i}-${j}`); // 행과 열에 따라 고유 ID 지정
-            tr.appendChild(td); // 현재 행에 셀 추가
-        }
-    }
-}
+//             tr.appendChild(td); // 생성된 셀을 현재 행에 추가
+//         }
+//     }
+// }
 
-// 보드를 초기화하고 게임 상태를 재설정
-function initializeBoard() {
-    // 기존 테이블 내용을 지우고 보드 재생성
-    table.innerHTML = '';
-    go.innerHTML = '';
+// // 바둑돌이 놓일 판 생성 함수: 논리적인 바둑판을 생성
+// function createPlacementBoard() {
+//     for (let i = 0; i < 17; i++) {
+//         // 17행(실제 게임 영역)을 생성
+//         const tr = document.createElement('tr'); // 새로운 행 생성
+//         go.appendChild(tr); // 바둑돌 배치판에 행 추가
 
-    // 오목판 및 바둑돌 배치판 재생성
-    createCheckerboard();
-    createPlacementBoard();
+//         for (let j = 0; j < 17; j++) {
+//             // 각 행에 대해 17개의 셀(td) 생성
+//             const td = document.createElement('td'); // 셀 생성
+//             td.setAttribute('id', `${i}-${j}`); // 셀 ID를 "행-열" 형식으로 지정
+//             tr.appendChild(td); // 생성된 셀을 현재 행에 추가
+//         }
+//     }
+// }
 
-    // 논리 및 시각적 게임 상태 재설정
-    resetBoardState();
+// // 보드 초기화 함수: 보드와 게임 상태를 초기화
+// function initializeBoard() {
+//     table.innerHTML = ''; // 기존 테이블 내용 삭제
+//     go.innerHTML = ''; // 기존 바둑돌 배치판 내용 삭제
 
-    // 돌 배치를 위한 이벤트 리스너 추가
-    addEventListeners();
-}
+//     createCheckerboard(); // 시각적인 오목판 생성
+//     createPlacementBoard(); // 논리적인 바둑판 생성
 
-// 게임 상태 재설정
-function resetBoardState() {
-    // 17x17 논리 보드 초기화 (모든 셀을 null로 설정)
-    boardState = Array(17)
-        .fill(null)
-        .map(() => Array(17).fill(null)); // 각 셀은 초기에는 비어 있음
+//     resetBoardState(); // 게임 상태 초기화
+//     addEventListeners(); // 클릭 이벤트 리스너 추가
+// }
 
-    // 바둑돌 배치판에서 모든 시각적 요소 제거
-    const cells = go.querySelectorAll('td');
-    cells.forEach((cell) => {
-        cell.className = ''; // 모든 클래스 제거 (black-stone, white-stone)
-        cell.style.backgroundColor = ''; // 인라인 스타일 초기화
-    });
+// // 게임 상태 초기화 함수
+// function resetBoardState() {
+//     // 17x17 배열 생성, 모든 셀을 null로 초기화 (돌이 놓이지 않음)
+//     boardState = Array(17)
+//         .fill(null)
+//         .map(() => Array(17).fill(null));
 
-    // 현재 플레이어를 검은 돌('black')로 초기화
-    currentPlayer = 'black';
-}
+//     // 바둑돌 배치판의 모든 시각적 요소 초기화
+//     const cells = go.querySelectorAll('td');
+//     cells.forEach((cell) => {
+//         cell.className = ''; // CSS 클래스 제거
+//         cell.style.backgroundColor = ''; // 인라인 스타일 초기화
+//     });
 
-// 바둑돌 배치판에 이벤트 리스너 추가
-function addEventListeners() {
-    // 바둑돌 배치판에 클릭 이벤트 리스너 추가
-    go.addEventListener('click', handleStonePlacement);
-}
+//     currentPlayer = 'black'; // 현재 플레이어를 흑돌로 초기화
+// }
 
-// 보드에 돌을 놓는 동작 처리
-function handleStonePlacement(e) {
-    const target = e.target; // 클릭된 요소 가져오기
-    if (target.tagName !== 'TD') return; // 셀 외부를 클릭한 경우 무시
+// // 이벤트 리스너 추가 함수: 바둑돌 배치판에 클릭 이벤트 추가
+// function addEventListeners() {
+//     go.addEventListener('click', handleStonePlacement); // 클릭 시 handleStonePlacement 실행
+// }
 
-    const [row, col] = target.id.split('-').map(Number); // 셀 ID에서 행과 열 추출
+// // 바둑돌 배치 함수: 사용자가 돌을 놓을 때 호출
+// function handleStonePlacement(e) {
+//     const target = e.target; // 클릭된 요소 가져오기
+//     if (target.tagName !== 'TD') return; // 클릭된 요소가 셀이 아닐 경우 무시
 
-    // 셀이 이미 차있으면 동작 중단
-    if (boardState[row][col] !== null) {
-        alert('이미 돌이 놓인 자리입니다!'); // 이미 돌이 놓인 경우 경고 표시
-        return;
-    }
+//     const [row, col] = target.id.split('-').map(Number); // 클릭된 셀의 행(row)과 열(col) 추출
 
-    // 검은 돌이 3-3 또는 4-4 규칙을 위반하는지 확인
-    if (currentPlayer === 'black' && isForbiddenMove(row, col)) {
-        alert(
-            '이 동작은 3-3 또는 4-4 규칙을 위반합니다. 다른 위치를 선택하세요.'
-        );
-        return;
-    }
+//     // 이미 돌이 놓인 경우 경고 메시지 표시 후 중단
+//     if (boardState[row][col] !== null) {
+//         alert('이미 돌이 놓인 자리입니다!');
+//         return;
+//     }
 
-    // 논리 상태에 돌 배치
-    boardState[row][col] = currentPlayer;
+//     // 3-3 또는 4-4 규칙 위반 확인 (흑돌인 경우만 적용)
+//     if (currentPlayer === 'black' && isForbiddenMove(row, col)) {
+//         alert(
+//             '이 동작은 3-3 또는 4-4 규칙을 위반합니다. 다른 위치를 선택하세요.'
+//         );
+//         return;
+//     }
 
-    // 시각적으로 돌 추가
-    target.classList.add(
-        currentPlayer === 'black' ? 'black-stone' : 'white-stone'
-    );
+//     // 돌을 놓고 논리 상태 업데이트
+//     boardState[row][col] = currentPlayer; // 현재 플레이어의 돌 배치
+//     target.classList.add(`${currentPlayer}-stone`); // 시각적으로 돌 표시
 
-    // 현재 놓인 돌로 인해 승리 여부 확인
-    if (checkWin(row, col, currentPlayer)) {
-        setTimeout(() => {
-            alert(`${currentPlayer === 'black' ? '흑' : '백'}이 승리했습니다!`); // 승리한 플레이어를 알림
-            initializeBoard(); // 승리 후 보드 초기화
-        }, 100); // 사용자 경험을 위해 약간의 딜레이 추가
-        return;
-    }
+//     // 승리 조건 확인
+//     if (checkWin(row, col, currentPlayer)) {
+//         setTimeout(() => {
+//             alert(`${currentPlayer === 'black' ? '흑' : '백'}이 승리했습니다!`);
+//             initializeBoard(); // 승리 후 보드 초기화
+//         }, 100);
+//         return;
+//     }
 
-    // 다음 플레이어로 전환
-    currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
-}
+//     // 다음 플레이어로 전환
+//     currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+// }
 
-// 3-3 또는 4-4 규칙 위반 여부 확인
-function isForbiddenMove(row, col) {
-    boardState[row][col] = 'black'; // 임시로 돌을 배치
+// // 금지된 동작(3-3 또는 4-4) 확인 함수
+// function isForbiddenMove(row, col) {
+//     boardState[row][col] = 'black'; // 임시로 돌 배치
+//     const isThreeThree = checkDoubleThree(row, col); // 3-3 규칙 위반 확인
+//     const isFourFour = checkDoubleFour(row, col); // 4-4 규칙 위반 확인
+//     boardState[row][col] = null; // 임시 배치된 돌 제거
+//     return isThreeThree || isFourFour; // 둘 중 하나라도 위반 시 true 반환
+// }
 
-    const isThreeThree = checkDoubleThree(row, col); // 3-3 규칙 위반 확인
-    const isFourFour = checkDoubleFour(row, col); // 4-4 규칙 위반 확인
+// // 3-3 규칙 확인 함수
+// function checkDoubleThree(row, col) {
+//     let threeDirections = []; // 열린 삼(Open Three)의 방향 저장
+//     const directions = [
+//         [0, 1],
+//         [1, 0],
+//         [1, 1],
+//         [1, -1], // 가로, 세로, 대각선 ↘, 대각선 ↙
+//     ];
 
-    boardState[row][col] = null; // 임시 돌 제거
+//     for (const [dx, dy] of directions) {
+//         if (isOpenThree(row, col, dx, dy)) {
+//             threeDirections.push([dx, dy]); // 열린 삼 발견 시 방향 추가
+//         }
+//         if (threeDirections.length >= 2) return true; // 두 방향 이상 발견 시 3-3 규칙 위반
+//     }
 
-    return isThreeThree || isFourFour; // 둘 중 하나라도 위반 시 true 반환
-}
+//     return false; // 3-3 규칙 위반 아님
+// }
 
-// 3-3 규칙 확인
-function checkDoubleThree(row, col) {
-    let threeDirections = [];
-    const directions = [
-        [0, 1],
-        [1, 0],
-        [1, 1],
-        [1, -1], // 가로, 세로, 대각선 ↘, 대각선 ↙
-    ];
+// // 열린 삼(Open Three) 확인 함수
+// function isOpenThree(row, col, dx, dy) {
+//     let count = 1; // 현재 돌 포함 돌 개수
+//     let openEnds = 0; // 열린 끝부분 개수
 
-    for (const [dx, dy] of directions) {
-        if (isOpenThree(row, col, dx, dy)) {
-            threeDirections.push([dx, dy]);
-            console.log(`Open Three found at direction: dx=${dx}, dy=${dy}`);
-        }
-        if (threeDirections.length >= 2) {
-            console.log(
-                `3-3 rule violation detected at (${row}, ${col}) with directions:`,
-                threeDirections
-            );
-            return true; // 3-3 위반
-        }
-    }
+//     // 앞쪽 방향 탐색
+//     let x = row + dx;
+//     let y = col + dy;
+//     while (
+//         x >= 0 &&
+//         x < 17 &&
+//         y >= 0 &&
+//         y < 17 &&
+//         boardState[x][y] === 'black'
+//     ) {
+//         count++;
+//         x += dx;
+//         y += dy;
+//     }
+//     if (x >= 0 && x < 17 && y >= 0 && y < 17 && boardState[x][y] === null) {
+//         openEnds++; // 열린 끝 발견 시 증가
+//     }
 
-    return false; // 3-3 위반이 아님
-}
+//     // 뒤쪽 방향 탐색
+//     x = row - dx;
+//     y = col - dy;
+//     while (
+//         x >= 0 &&
+//         x < 17 &&
+//         y >= 0 &&
+//         y < 17 &&
+//         boardState[x][y] === 'black'
+//     ) {
+//         count++;
+//         x -= dx;
+//         y -= dy;
+//     }
+//     if (x >= 0 && x < 17 && y >= 0 && y < 17 && boardState[x][y] === null) {
+//         openEnds++; // 열린 끝 발견 시 증가
+//     }
 
-function isOpenThree(row, col, dx, dy) {
-    let count = 1; // 현재 돌 포함
-    let openEnds = 0;
+//     // 정확히 3개의 돌이 있고 양쪽 끝이 열려 있는지 확인
+//     return count === 3 && openEnds === 2;
+// }
 
-    // 앞쪽 방향 확인
-    let x = row + dx;
-    let y = col + dy;
-    while (
-        x >= 0 &&
-        x < 17 &&
-        y >= 0 &&
-        y < 17 &&
-        boardState[x][y] === 'black'
-    ) {
-        count++;
-        x += dx;
-        y += dy;
-    }
-    if (x >= 0 && x < 17 && y >= 0 && y < 17 && boardState[x][y] === null) {
-        openEnds++;
-    }
+// // 4-4 규칙 확인 함수
+// function checkDoubleFour(row, col) {
+//     let fourCount = 0; // 정확한 사(4)의 개수
+//     const directions = [
+//         [0, 1],
+//         [1, 0],
+//         [1, 1],
+//         [1, -1],
+//     ];
 
-    // 뒤쪽 방향 확인
-    x = row - dx;
-    y = col - dy;
-    while (
-        x >= 0 &&
-        x < 17 &&
-        y >= 0 &&
-        y < 17 &&
-        boardState[x][y] === 'black'
-    ) {
-        count++;
-        x -= dx;
-        y -= dy;
-    }
-    if (x >= 0 && x < 17 && y >= 0 && y < 17 && boardState[x][y] === null) {
-        openEnds++;
-    }
+//     for (const [dx, dy] of directions) {
+//         if (isExactFour(row, col, dx, dy)) {
+//             fourCount++;
+//         }
+//         if (fourCount >= 2) return true; // 두 방향 이상 발견 시 4-4 규칙 위반
+//     }
 
-    // 디버깅 로그 추가
-    console.log(
-        `Direction (dx=${dx}, dy=${dy}) -> count=${count}, openEnds=${openEnds}`
-    );
+//     return false; // 4-4 규칙 위반 아님
+// }
 
-    // 정확히 3개의 돌이 있어야 하고 양쪽 끝이 열려 있어야 함
-    const result = count === 3 && openEnds === 2;
-    console.log(
-        `isOpenThree -> result=${result} (count=${count}, openEnds=${openEnds})`
-    );
-    return result;
-}
+// // 정확한 사(4) 확인 함수
+// function isExactFour(row, col, dx, dy) {
+//     let count = 1; // 현재 돌 포함 돌 개수
 
-// 4-4 규칙 확인
-function checkDoubleFour(row, col) {
-    let fourCount = 0;
-    const directions = [
-        [0, 1],
-        [1, 0],
-        [1, 1],
-        [1, -1], // 가로, 세로, 대각선 ↘, 대각선 ↙
-    ];
+//     // 앞쪽 방향 탐색
+//     let x = row + dx;
+//     let y = col + dy;
+//     while (
+//         x >= 0 &&
+//         x < 17 &&
+//         y >= 0 &&
+//         y < 17 &&
+//         boardState[x][y] === 'black'
+//     ) {
+//         count++;
+//         x += dx;
+//         y += dy;
+//     }
 
-    for (const [dx, dy] of directions) {
-        if (isExactFour(row, col, dx, dy)) {
-            fourCount++;
-        }
-        if (fourCount >= 2) return true; // 4-4 위반
-    }
+//     // 뒤쪽 방향 탐색
+//     x = row - dx;
+//     y = col - dy;
+//     while (
+//         x >= 0 &&
+//         x < 17 &&
+//         y >= 0 &&
+//         y < 17 &&
+//         boardState[x][y] === 'black'
+//     ) {
+//         count++;
+//         x -= dx;
+//         y -= dy;
+//     }
 
-    return false;
-}
+//     return count === 4; // 정확히 4개의 돌이 있는지 반환
+// }
 
-function isExactFour(row, col, dx, dy) {
-    let count = 1;
+// // 승리 조건 확인 함수
+// function checkWin(row, col, player) {
+//     const directions = [
+//         [0, 1],
+//         [1, 0],
+//         [1, 1],
+//         [1, -1],
+//     ];
 
-    let x = row + dx;
-    let y = col + dy;
-    while (
-        x >= 0 &&
-        x < 17 &&
-        y >= 0 &&
-        y < 17 &&
-        boardState[x][y] === 'black'
-    ) {
-        count++;
-        x += dx;
-        y += dy;
-    }
+//     for (const [dx, dy] of directions) {
+//         let count = 1;
+//         count += countStones(row, col, dx, dy, player); // 앞쪽 방향 돌 개수
+//         count += countStones(row, col, -dx, -dy, player); // 뒤쪽 방향 돌 개수
 
-    x = row - dx;
-    y = col - dy;
-    while (
-        x >= 0 &&
-        x < 17 &&
-        y >= 0 &&
-        y < 17 &&
-        boardState[x][y] === 'black'
-    ) {
-        count++;
-        x -= dx;
-        y -= dy;
-    }
+//         if (count >= 5) return true; // 5개 이상의 돌이 연속되면 승리
+//     }
 
-    return count === 4; // 정확히 4개의 돌
-}
+//     return false; // 승리 조건 미충족
+// }
 
-// 승리 조건 확인
-function checkWin(row, col, player) {
-    // 4가지 방향을 정의 (가로, 세로, 대각선 ↘, 대각선 ↙)
-    const directions = [
-        [0, 1], // 가로 (→)
-        [1, 0], // 세로 (↓)
-        [1, 1], // 대각선 (↘)
-        [1, -1], // 대각선 (↙)
-    ];
+// // 특정 방향으로 연속된 돌 개수 계산 함수
+// function countStones(row, col, dx, dy, player) {
+//     let count = 0;
+//     let x = row + dx;
+//     let y = col + dy;
 
-    // 각 방향 확인
-    for (const [dx, dy] of directions) {
-        let count = 1; // 현재 놓인 돌 포함
+//     while (
+//         x >= 0 &&
+//         x < 17 &&
+//         y >= 0 &&
+//         y < 17 &&
+//         boardState[x][y] === player
+//     ) {
+//         count++;
+//         x += dx;
+//         y += dy;
+//     }
 
-        // 앞쪽 방향으로 연속된 돌 개수 계산
-        count += countStones(row, col, dx, dy, player);
-
-        // 뒤쪽 방향으로 연속된 돌 개수 계산
-        count += countStones(row, col, -dx, -dy, player);
-
-        // 5개 이상의 돌이 연속으로 있으면 승리
-        if (count >= 5) return true;
-    }
-
-    return false; // 승리 조건을 충족하지 않음
-}
-
-// 특정 방향으로 연속된 돌 개수 계산
-function countStones(row, col, dx, dy, player) {
-    let count = 0; // 초기 개수는 0
-    let x = row + dx; // 지정된 방향으로 다음 셀 시작
-    let y = col + dy;
-
-    // 지정된 방향으로 셀을 탐색
-    while (
-        x >= 0 && // 상단 경계 안에 있어야 함
-        x < 17 && // 하단 경계 안에 있어야 함
-        y >= 0 && // 좌측 경계 안에 있어야 함
-        y < 17 && // 우측 경계 안에 있어야 함
-        boardState[x][y] === player // 현재 플레이어의 돌인지 확인
-    ) {
-        count++; // 돌 개수 증가
-        x += dx; // 지정된 방향으로 이동
-        y += dy;
-    }
-
-    return count; // 해당 방향으로 연속된 돌 개수 반환
-}
+//     return count; // 해당 방향으로 연속된 돌 개수 반환
+// }
