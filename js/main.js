@@ -1,5 +1,5 @@
 // main.js
-import { resetBoardState } from './gameLogic.js';
+import { resetBoardState, resetTimers } from './gameLogic.js';
 import { createCheckerboard, createPlacementBoard } from './view.js';
 import { addEventListeners } from './eventHandlers.js';
 
@@ -27,6 +27,7 @@ function initializeGame() {
     table.innerHTML = '';
     go.innerHTML = '';
     resetBoardState();
+    resetTimers();
     createCheckerboard(table, starPoints);
     createPlacementBoard(go);
     addEventListeners(go);

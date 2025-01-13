@@ -2,9 +2,9 @@
 export function createCheckerboard(table, starPoints) {
     table.innerHTML = '';
     for (let i = 0; i < 18; i++) {
-        const tr = document.createElement('tr');
+        const tr = document.createElement('tr'); // 행
         for (let j = 0; j < 18; j++) {
-            const td = document.createElement('td');
+            const td = document.createElement('td'); // 셀
             td.setAttribute('class', 'square');
 
             // 화점 위치에 점 추가

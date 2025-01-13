@@ -10,14 +10,35 @@
             rel="stylesheet"
             href="css/style.css"
         />
+        <script
+            type="module"
+            src="./js/main.js"
+            defer
+        ></script>
         <title>SEOK_Gomoku</title>
-        <!-- <script src="./js/index.js" defer></script> -->
-        <script type="module" src="./js/main.js" defer></script>
-
+    </head>
     <body>
-        <div id="board">
-            <table id="table"></table>
-            <table id="go"></table>
+        <div id="game-container">
+            <div id="board">
+                <table id="table"></table>
+                <table id="go"></table>
+            </div>
+            <div id="timers">
+                <div
+                    class="timer"
+                    id="black-timer"
+                >
+                    <h3>흑</h3>
+                    <span id="black-time">35</span>초
+                </div>
+                <div
+                    class="timer"
+                    id="white-timer"
+                >
+                    <h3>백</h3>
+                    <span id="white-time">35</span>초
+                </div>
+            </div>
         </div>
     </body>
 </html>
