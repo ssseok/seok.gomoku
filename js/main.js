@@ -1,4 +1,3 @@
-// main.js
 import { resetBoardState, resetTimers } from './gameLogic.js';
 import { createCheckerboard, createPlacementBoard } from './view.js';
 import { addEventListeners } from './eventHandlers.js';

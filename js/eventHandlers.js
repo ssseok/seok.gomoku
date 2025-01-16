@@ -13,11 +13,12 @@ import { isForbiddenMove } from './rules.js';
 
 export function handleStonePlacement(e) {
     const target = e.target;
+
     if (target.tagName !== 'TD') return;
 
     const [row, col] = target.id.split('-').map(Number); // 클릭된 셀의 행, 열 좌표
 
-    // // 이미 돌이 놓인 경우
+    // 이미 돌이 놓인 경우
     if (boardState[row][col] !== null) {
         alert('이미 돌이 놓인 자리입니다!');
         return;

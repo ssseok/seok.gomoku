@@ -63,7 +63,14 @@ export function startTimer() {
         currentTimer--; // 1초 감소
         activeTimerElement.textContent = currentTimer; // UI 업데이트
 
-        if (currentTimer <= 0) {
+        // 현재 플레이어의 타이머 변수 업데이트
+        // if (currentPlayer === 'black') {
+        //     blackTimer = currentTimer;
+        // } else {
+        //     whiteTimer = currentTimer;
+        // }
+
+        if (currentTimer < 0) {
             // 타이머 종료 시
             clearInterval(timerInterval);
             timerRunning = false;
@@ -76,13 +83,6 @@ export function startTimer() {
             resetTimers(); // 타이머 초기화
         }
     }, 1000);
-
-    // 현재 플레이어의 타이머 변수 업데이트
-    if (currentPlayer === 'black') {
-        blackTimer = currentTimer;
-    } else {
-        whiteTimer = currentTimer;
-    }
 }
 
 // 타이머 초기화 함수
@@ -109,7 +109,7 @@ export function checkWin(row, col, player) {
         count += countStones(row, col, dx, dy, player);
         count += countStones(row, col, -dx, -dy, player);
 
-        if (count >= 5) return true; // 5개 이상의 돌이 연속되면 승리
+        if (count == 5) return true; // 5개의 돌이 연속되면 승리
     }
 
     return false;
