@@ -7,6 +7,7 @@ import {
     startTimer,
     timerRunning,
     timerInterval,
+    resetTimers,
 } from './gameLogic.js';
 
 import { isForbiddenMove } from './rules.js';
