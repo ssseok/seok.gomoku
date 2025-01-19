@@ -1,0 +1,32 @@
+{
+    "name": "seok-gomoku",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ssseok/seok-gomoku.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ssseok/seok-gomoku/issues"
+    },
+    "homepage": "https://github.com/ssseok/seok-gomoku#readme",
+    "description": "",
+    "dependencies": {
+        "express": "^4.21.2",
+        "socket.io": "^4.8.1",
+        "ws": "^8.18.0"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.26.4",
+        "@babel/core": "^7.26.0",
+        "@babel/node": "^7.26.0",
+        "@babel/preset-env": "^7.26.0",
+        "nodemon": "^3.1.9"
+    }
+}
