@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/src/views/index.html"
+        }
+    ],
+    "cleanUrls": true
+}
