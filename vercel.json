@@ -3,7 +3,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/src/views/index.html"
+            "dest": "/index.html"
         }
     ],
     "cleanUrls": true
